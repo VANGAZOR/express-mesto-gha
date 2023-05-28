@@ -7,10 +7,10 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(400).send({
-          message: "Переданы некорректные данные",
+          message: `Переданы некорректные данные с ошибкой ${err.name}`,
         });
       } else {
-        res.status(500).send({ message: "Произошла ошибка" });
+        res.status(500).send({ message: `Произошла ошибка ${err.name}` });
       }
     });
 };
@@ -18,23 +18,58 @@ module.exports.createUser = (req, res) => {
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) =>
+      res.status(500).send({ message: `Произошла ошибка ${err.name}` })
+    );
 };
 
 module.exports.getUserId = (req, res) => {
-  User.findById(req.params.id)
+  User.findById(req.params.userId)
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(404).send({
+          message: `Юзер не найден по указанному id ${req.params.userId}`,
+        });
+      } else {
+        res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+      }
+    });
 };
 
 module.exports.updateUser = (req, res) => {
-  User.findByIdAndUpdate(req.params.id, { name: "Виктор Гусев" })
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(
+    req.params.id,
+    { name, about },
+    { new: true, runValidators: true }
+  )
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(400).send({
+          message: `Переданы некорректные данные с ошибкой ${err.name}`,
+        });
+      }
+      if (err.name === "CastError") {
+        res.status(404).send({
+          message: `Юзер не найден по указанному id ${req.params.userId}`,
+        });
+      } else {
+        res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+      }
+    });
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.params.id, { avatar: "example.jpg" })
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(
+    req.params.id,
+    { avatar },
+    { new: true, runValidators: true }
+  )
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) =>
+      res.status(500).send({ message: `Произошла ошибка ${err.name}` })
+    );
 };
