@@ -38,24 +38,27 @@ module.exports.deleteCardId = (req, res) => {
 };
 
 module.exports.addLike = (req, res) => {
-  console.log(req.params);
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: "1" } },
+    { $addToSet: { likes: req.user_id } },
     { new: true }
   )
     .then((card) => res.send(card))
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` })
-    );
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(404).send({
+          message: `Карточка не найдена`,
+        });
+      } else {
+        res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+      }
+    });
 };
 
 module.exports.removeLike = (req, res) => {
-  console.log(req.params);
-  console.log(req.user);
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: 1 } },
+    { $pull: { likes: req.user_id } },
     { new: true }
   )
     .then((user) => res.send({ data: user }))
