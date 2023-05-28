@@ -1,16 +1,24 @@
 const User = require("../models/user");
+const {
+  HTTP_STATUS_NOT_FOUND,
+  HTTP_STATUS_INTERNAL_SERVER_ERROR,
+  HTTP_STATUS_BAD_REQUEST,
+  HTTP_STATUS_CREATED,
+} = require("http2").constants;
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(HTTP_STATUS_CREATED).send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(400).send({
+        res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send({
           message: `Переданы некорректные данные с ошибкой ${err.name}`,
         });
       } else {
-        res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+        res
+          .status(HTTP_STATUS_BAD_REQUEST)
+          .send({ message: `Произошла ошибка ${err.name}` });
       }
     });
 };
@@ -19,7 +27,9 @@ module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` })
+      res
+        .status(HTTP_STATUS_BAD_REQUEST)
+        .send({ message: `Произошла ошибка ${err.name}` })
     );
 };
 
@@ -27,7 +37,7 @@ module.exports.getUserId = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({
+        return res.status(HTTP_STATUS_NOT_FOUND).send({
           message: `Юзер не найден по указанному id ${req.params.userId}`,
         });
       } else {
@@ -35,13 +45,13 @@ module.exports.getUserId = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.name === ("CastError" || "ValidationError")) {
-        return res.status(400).send({
+      if (err.name === "CastError") {
+        return res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send({
           message: `Некорректный id ${req.params.userId}`,
         });
       } else {
         return res
-          .status(500)
+          .status(HTTP_STATUS_BAD_REQUEST)
           .send({ message: `Произошла ошибка ${err.name}` });
       }
     });
@@ -54,19 +64,16 @@ module.exports.updateUser = (req, res) => {
     { name, about },
     { new: true, runValidators: true }
   )
-    .then((user) => res.send({ data: user, test: console.log(user) }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(400).send({
+        res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send({
           message: `Переданы некорректные данные с ошибкой ${err.name}`,
         });
-      }
-      if (err.name === "CastError") {
-        res.status(404).send({
-          message: `Юзер не найден по указанному id ${req.params.userId}`,
-        });
       } else {
-        res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+        res
+          .status(HTTP_STATUS_BAD_REQUEST)
+          .send({ message: `Произошла ошибка ${err.name}` });
       }
     });
 };
@@ -79,7 +86,29 @@ module.exports.updateUserAvatar = (req, res) => {
     { new: true, runValidators: true }
   )
     .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` })
-    );
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send({
+          message: `Переданы некорректные данные с ошибкой ${err.name}`,
+        });
+      } else {
+        res
+          .status(HTTP_STATUS_BAD_REQUEST)
+          .send({ message: `Произошла ошибка ${err.name}` });
+      }
+    });
 };
+
+// const wrapper = (req,res) => (promise.then((user) => res.send({ data: user }))
+//     .catch((err) => {
+//       if (err.name === "ValidationError") {
+//         res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send({
+//           message: `Переданы некорректные данные с ошибкой ${err.name}`,
+//         });
+//       } else {
+//         res
+//           .status(HTTP_STATUS_BAD_REQUEST)
+//           .send({ message: `Произошла ошибка ${err.name}` });
+//       }
+//     }))
+// module.exports = { updateUser, updateUserAvatar };

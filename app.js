@@ -1,9 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+const { HTTP_STATUS_NOT_FOUND } = require("http2").constants;
 
 // подключаемся к серверу mongo
 mongoose.connect("mongodb://localhost:27017/mestodb", {});
@@ -15,11 +15,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/", require("./routes/users"));
-app.use("/", require("./routes/cards"));
+app.use("/", require("./routes/index"));
 
 app.use((req, res) => {
-  res.status(404).send({ message: "Неправильный путь" });
+  res.status(HTTP_STATUS_NOT_FOUND).send({ message: "Неправильный путь" });
 });
 
 app.listen(3000);

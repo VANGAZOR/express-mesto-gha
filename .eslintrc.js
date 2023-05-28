@@ -1,6 +1,5 @@
 module.exports = {
   env: {
-    browser: true,
     es2021: true,
     node: true,
   },
@@ -11,5 +10,5 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["react"],
-  rules: {},
+  rules: { "no-underscore-dangle": ["error", { allow: ["_id"] }] },
 };
