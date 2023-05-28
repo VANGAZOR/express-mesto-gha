@@ -25,22 +25,19 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.getUserId = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(new Error("NotValidId"))
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({
+          message: `Юзер не найден по указанному id ${req.params.userId}`,
+        });
+      } else {
+        res.send(user);
+      }
+    })
     .catch((err) => {
       if (err.name === ("CastError" || "ValidationError")) {
         return res.status(400).send({
           message: `Некорректный id ${req.params.userId}`,
-        });
-      }
-      if (err.name === "NotValidId") {
-        return res.status(400).send({
-          message: `Некорректныйй id ${req.params.userId}`,
-        });
-      }
-      if (err.name === "NotFound") {
-        return res.status(404).send({
-          message: `Юзер не найден по указанному id ${req.params.userId}`,
         });
       } else {
         return res
