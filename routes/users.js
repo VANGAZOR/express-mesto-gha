@@ -16,7 +16,7 @@ router.post("/users", createUser);
 router.get("/users", getAllUsers);
 router.get("/users/:userId", getUserId);
 router.patch("/users/me", updateUser);
-router.patch("/users/:userId", updateUserAvatar);
+router.patch("/users/me/avatar", updateUserAvatar);
 router.get("/test", function (req, res) {
   res.send(req.params);
 });
