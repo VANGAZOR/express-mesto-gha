@@ -12,12 +12,12 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.status(HTTP_STATUS_CREATED).send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send({
+        res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: `Переданы некорректные данные с ошибкой ${err.name}`,
         });
       } else {
         res
-          .status(HTTP_STATUS_BAD_REQUEST)
+          .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
           .send({ message: `Произошла ошибка ${err.name}` });
       }
     });
@@ -28,7 +28,7 @@ module.exports.getAllUsers = (req, res) => {
     .then((users) => res.send({ data: users }))
     .catch((err) =>
       res
-        .status(HTTP_STATUS_BAD_REQUEST)
+        .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
         .send({ message: `Произошла ошибка ${err.name}` })
     );
 };
@@ -46,12 +46,12 @@ module.exports.getUserId = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        return res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send({
+        return res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: `Некорректный id ${req.params.userId}`,
         });
       } else {
         return res
-          .status(HTTP_STATUS_BAD_REQUEST)
+          .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
           .send({ message: `Произошла ошибка ${err.name}` });
       }
     });
@@ -67,12 +67,12 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send({
+        res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: `Переданы некорректные данные с ошибкой ${err.name}`,
         });
       } else {
         res
-          .status(HTTP_STATUS_BAD_REQUEST)
+          .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
           .send({ message: `Произошла ошибка ${err.name}` });
       }
     });
@@ -88,12 +88,12 @@ module.exports.updateUserAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send({
+        res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: `Переданы некорректные данные с ошибкой ${err.name}`,
         });
       } else {
         res
-          .status(HTTP_STATUS_BAD_REQUEST)
+          .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
           .send({ message: `Произошла ошибка ${err.name}` });
       }
     });
