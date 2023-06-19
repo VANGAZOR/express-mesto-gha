@@ -4,6 +4,7 @@ const {
   HTTP_STATUS_INTERNAL_SERVER_ERROR,
   HTTP_STATUS_BAD_REQUEST,
   HTTP_STATUS_CREATED,
+  HTTP_STATUS_FORBIDDEN,
 } = require("http2").constants;
 
 module.exports.createCard = (req, res) => {
@@ -41,8 +42,11 @@ module.exports.deleteCardId = (req, res) => {
         return res
           .status(HTTP_STATUS_NOT_FOUND)
           .send({ message: `Карточка не найдена` });
-      } else {
-        return res.send(card);
+      }
+      if (!card.owner.equals(req.user._id)) {
+        return res
+          .status(HTTP_STATUS_FORBIDDEN)
+          .send({ message: `Вы не можете удалить чужую карточку` });
       }
     })
     .catch((err) => {
