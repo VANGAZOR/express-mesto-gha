@@ -1,9 +1,9 @@
 const userRoutes = require("express").Router();
-const {
-  validationUpdateAvatar,
-  validationUpdateUser,
-  validationUserId,
-} = require("../middlewares/auth");
+// const {
+//   validationUpdateAvatar,
+//   validationUpdateUser,
+//   validationUserId,
+// } = require("../middlewares/auth");
 
 const {
   getAllUsers,
