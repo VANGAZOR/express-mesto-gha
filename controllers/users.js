@@ -13,10 +13,18 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar, email, password } = req.body;
   bcrypt
     .hash(password, 10)
-    .then((hash) => {
-      User.create({ name, about, avatar, email, password: hash }).then((user) =>
-        res.status(HTTP_STATUS_CREATED).send({ data: user })
-      );
+    .then((hash) =>
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      })
+    )
+    .then((user) => User.findOne({ _id: user._id }))
+    .then((user) => {
+      res.status(HTTP_STATUS_CREATED).send(user);
     })
     .catch((err) => {
       if (err.code === 11000) {
