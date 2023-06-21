@@ -37,7 +37,11 @@ module.exports.getAllCards = (req, res) => {
 
 module.exports.deleteCardId = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(new Error("Карточка не найдена"))
+    .orFail(
+      res
+        .status(HTTP_STATUS_NOT_FOUND)
+        .send({ message: "Карточка не существует" })
+    )
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
         return res
