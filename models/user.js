@@ -7,13 +7,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: "Жак Ив-Кусто",
+    default: "Жак-Ив Кусто",
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: "Исследователь океана",
+    default: "Исследователь",
   },
   avatar: {
     type: String,
@@ -46,7 +46,7 @@ userSchema.statics.findUserByCredentials = function (email, password) {
     .then((user) => {
       if (!user) {
         return Promise.reject(
-          new Unauthorized("Неправильные почта или пароль")
+          new Unauthorized("Неправильная почта или пароль")
         );
       }
       return bcrypt.compare(password, user.password).then((matched) => {

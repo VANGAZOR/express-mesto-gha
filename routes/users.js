@@ -38,6 +38,7 @@ userRoutes.patch(
   }),
   updateUser
 );
+
 userRoutes.patch(
   "/me/avatar",
   celebrate({
