@@ -37,18 +37,21 @@ module.exports.getAllCards = (req, res) => {
 
 module.exports.deleteCardId = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail(new Error("Карточка не найдена"))
     .then((card) => {
-      if (!card) {
-        return res
-          .status(HTTP_STATUS_NOT_FOUND)
-          .send({ message: `Карточка не найдена` });
+      if (card.owner.toString() !== req.user._id) {
+        throw new Error("Вы не можете удалить карточку другого пользователя");
       }
-      if (!card.owner.equals(req.user._id)) {
-        return res
-          .status(HTTP_STATUS_FORBIDDEN)
-          .send({ message: `Вы не можете удалить чужую карточку` });
-      }
+      res.send(card);
     })
+    // .then((card) => {
+    //   if (!card.owner.equals(req.user._id)) {
+    //     return res
+    //       .status(HTTP_STATUS_FORBIDDEN)
+    //       .send({ message: `Вы не можете удалить чужую карточку` });
+    //   }
+    //   res.send(11111);
+    // })
     .catch((err) => {
       if (err.name === "CastError") {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
