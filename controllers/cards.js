@@ -42,21 +42,24 @@ module.exports.deleteCardId = (req, res) => {
       if (card.owner.toString() !== req.user._id) {
         throw new Error("Вы не можете удалить карточку другого пользователя");
       }
+      if (!card.owner.equals(req.user._id)) {
+        return res
+          .status(HTTP_STATUS_FORBIDDEN)
+          .send({ message: `Вы не можете удалить чужую карточку` });
+      }
       res.send(card);
     })
-    // .then((card) => {
-    //   if (!card.owner.equals(req.user._id)) {
-    //     return res
-    //       .status(HTTP_STATUS_FORBIDDEN)
-    //       .send({ message: `Вы не можете удалить чужую карточку` });
-    //   }
-    //   res.send(11111);
-    // })
     .catch((err) => {
       if (err.name === "CastError") {
         return res.status(HTTP_STATUS_BAD_REQUEST).send({
           message: `Переданы некорректные данные с ошибкой ${err.name}`,
         });
+      }
+      if (err.message === "NotFound") {
+        res
+          .status(HTTP_STATUS_NOT_FOUND)
+          .send({ message: "Карточка не существует" });
+        return;
       } else {
         return res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
