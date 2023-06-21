@@ -14,7 +14,7 @@ const auth = require("./middlewares/auth");
 
 // подключаемся к серверу mongo
 mongoose.connect("mongodb://localhost:27017/mestodb", {});
-
+app.use(auth);
 app.post(
   "/signin",
   celebrate({
@@ -41,7 +41,6 @@ app.post(
 );
 
 app.use("/", require("./routes/index"));
-app.use(auth);
 
 app.use((req, res) => {
   res.status(HTTP_STATUS_NOT_FOUND).send({ message: "Неправильный путь" });

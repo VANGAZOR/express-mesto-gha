@@ -73,9 +73,10 @@ module.exports.validationCardById = celebrate({
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    throw res.status(HTTP_STATUS_UNAUTHORIZED).send({
-      message: `Необходима авторизация`,
-    });
+    // throw res.status(HTTP_STATUS_UNAUTHORIZED).send({
+    //   message: `Необходима авторизация`,
+    // });
+    return res.status(401).send({ message: "Необходима авторизация" });
   }
   const token = authorization.replace("Bearer ", "");
   let payload;
