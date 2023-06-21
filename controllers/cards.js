@@ -39,13 +39,15 @@ module.exports.deleteCardId = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .orFail(new Error("Карточка не найдена"))
     .then((card) => {
-      if (card.owner.toString() !== req.user._id) {
-        throw new Error("Вы не можете удалить карточку другого пользователя");
-      }
       if (!card.owner.equals(req.user._id)) {
         return res
           .status(HTTP_STATUS_FORBIDDEN)
           .send({ message: `Вы не можете удалить чужую карточку` });
+      }
+      if (!card) {
+        res
+          .status(HTTP_STATUS_NOT_FOUND)
+          .send({ message: "Карточка не существует" });
       }
       res.send(card);
     })
