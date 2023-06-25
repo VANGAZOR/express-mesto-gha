@@ -20,7 +20,7 @@ module.exports.createCard = (req, res) => {
       } else {
         return res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `Произошла ошибка ${err.name}` });
+          .send({ message: `На сервере произошла ошибка` });
       }
     });
 };
@@ -28,10 +28,10 @@ module.exports.createCard = (req, res) => {
 module.exports.getAllCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) =>
+    .catch(() =>
       res
         .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: `Произошла ошибка ${err.name}` })
+        .send({ message: `На сервере произошла ошибка` })
     );
 };
 
@@ -69,7 +69,7 @@ module.exports.deleteCardId = (req, res) => {
       } else {
         return res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `Произошла ошибка ${err.name}` });
+          .send({ message: `На сервере произошла ошибка` });
       }
     });
 };
@@ -97,7 +97,7 @@ module.exports.addLike = (req, res) => {
       } else {
         return res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `Произошла ошибка ${err.name}` });
+          .send({ message: `На сервере произошла ошибка` });
       }
     });
 };
@@ -125,6 +125,6 @@ module.exports.removeLike = (req, res) => {
       }
       return res
         .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: `Произошла ошибка ${err.name}` });
+        .send({ message: `На сервере произошла ошибка` });
     });
 };

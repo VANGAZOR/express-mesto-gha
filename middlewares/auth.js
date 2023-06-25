@@ -3,6 +3,10 @@ const { HTTP_STATUS_UNAUTHORIZED, HTTP_STATUS_BAD_REQUEST } =
   require("http2").constants;
 const { celebrate, Joi } = require("celebrate");
 const isUrl = require("validator/lib/isURL");
+require("dotenv").config();
+
+const { JWT_SECRET } = process.env;
+
 const validationUrl = (url) => {
   const validate = isUrl(url);
   if (validate) {
@@ -45,7 +49,7 @@ module.exports = (req, res, next) => {
   const token = authorization.replace("Bearer ", "");
   let payload;
   try {
-    payload = jwt.verify(token, "some-secret-key");
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     return res.status(HTTP_STATUS_UNAUTHORIZED).send({
       message: `Необходима авторизация`,
