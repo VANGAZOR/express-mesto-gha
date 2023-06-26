@@ -7,9 +7,6 @@ const {
   HTTP_STATUS_FORBIDDEN,
 } = require("http2").constants;
 
-const NotFound = require("../errors/NotFound");
-const Conflict = require("../errors/Conflict");
-
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
@@ -23,7 +20,7 @@ module.exports.createCard = (req, res) => {
       } else {
         return res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка` });
+          .send({ message: `На сервере произошла ошибка ${err.name}` });
       }
     });
 };
@@ -31,10 +28,10 @@ module.exports.createCard = (req, res) => {
 module.exports.getAllCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() =>
+    .catch((err) =>
       res
         .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка` })
+        .send({ message: `На сервере произошла ошибка ${err.name}` })
     );
 };
 
@@ -49,7 +46,7 @@ module.exports.deleteCardId = (req, res) => {
       if (!card) {
         res
           .status(HTTP_STATUS_NOT_FOUND)
-          .send({ message: "Карточка не существует1" });
+          .send({ message: "Карточка не существует" });
       }
       res.send({ message: "Карточка удалена" });
     })
@@ -62,17 +59,17 @@ module.exports.deleteCardId = (req, res) => {
       if (err.name === "TypeError") {
         return res
           .status(HTTP_STATUS_NOT_FOUND)
-          .send({ message: "Карточка не существует3" });
+          .send({ message: "Карточка не существует" });
       }
       if (err.message === "NotFound") {
         res
           .status(HTTP_STATUS_NOT_FOUND)
-          .send({ message: "Карточка не существует2" });
+          .send({ message: "Карточка не существует" });
         return;
       } else {
         return res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка` });
+          .send({ message: `На сервере произошла ошибка ${err.name}` });
       }
     });
 };
@@ -100,7 +97,7 @@ module.exports.addLike = (req, res) => {
       } else {
         return res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка` });
+          .send({ message: `На сервере произошла ошибка ${err.name}` });
       }
     });
 };
@@ -128,6 +125,6 @@ module.exports.removeLike = (req, res) => {
       }
       return res
         .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка` });
+        .send({ message: `На сервере произошла ошибка ${err.name}` });
     });
 };
