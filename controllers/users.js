@@ -39,7 +39,7 @@ module.exports.createUser = (req, res) => {
       } else {
         res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка ${err.name}` });
+          .send({ message: `На сервере произошла ошибка` });
       }
     });
 };
@@ -47,10 +47,10 @@ module.exports.createUser = (req, res) => {
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) =>
+    .catch(() =>
       res
         .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-        .send({ message: `На сервере произошла ошибка ${err.name}` })
+        .send({ message: `На сервере произошла ошибка` })
     );
 };
 
@@ -73,7 +73,7 @@ module.exports.getUserId = (req, res) => {
       } else {
         return res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка ${err.name}` });
+          .send({ message: `На сервере произошла ошибка` });
       }
     });
 };
@@ -94,7 +94,7 @@ module.exports.updateUser = (req, res) => {
       } else {
         res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка ${err.name}` });
+          .send({ message: `На сервере произошла ошибка` });
       }
     });
 };
@@ -115,7 +115,7 @@ module.exports.updateUserAvatar = (req, res) => {
       } else {
         res
           .status(HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка ${err.name}` });
+          .send({ message: `На сервере произошла ошибка` });
       }
     });
 };
